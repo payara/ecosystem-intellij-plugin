@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '1.13.2'
-    id 'com.github.spotbugs' version '5.0.14' // Add SpotBugs plugin
+    id 'com.github.spotbugs' version '6.2.7' // Add SpotBugs plugin
 }
 
 apply plugin: 'org.jetbrains.intellij'
