@@ -17,7 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    echo '*#*#*#*#*#*#*#*#*#*#*#*#  Building SRC  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
+                    echo '*#*#*#*#*#*#*#*#*#*#*#*#  Building SRC  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*##'
                     sh '''
                     gradle clean build -x check                    
                     '''
