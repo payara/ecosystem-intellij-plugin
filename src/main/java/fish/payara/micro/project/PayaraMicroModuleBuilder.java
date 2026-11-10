@@ -20,7 +20,6 @@ import com.intellij.ide.util.projectWizard.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -40,7 +39,6 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -58,11 +56,6 @@ public class PayaraMicroModuleBuilder extends JavaModuleBuilder {
     @Override
     public final int getWeight() {
         return 10;
-    }
-
-    @Override
-    public ModuleType<?> getModuleType() {
-        return StdModuleTypes.JAVA;
     }
 
     @Override

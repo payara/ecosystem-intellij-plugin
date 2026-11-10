@@ -1,0 +1,14 @@
+<configuration>
+    <uiState exploded="true" contextRoot="/sample" payaraHome="/opt/payara"
+             domainName="domain1" host="example.invalid" protocol="http"
+             httpPort="8080" adminPort="4848" debugPort="9009" remote="true">
+        <payaraProperties>
+            <property key="test.property" value="value"/>
+            <property key="incomplete"/>
+        </payaraProperties>
+        <envVars>
+            <env key="TEST_ENV" value="test-value"/>
+            <env key="incomplete"/>
+        </envVars>
+    </uiState>
+</configuration>

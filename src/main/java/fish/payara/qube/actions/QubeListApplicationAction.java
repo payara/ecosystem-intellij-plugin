@@ -17,7 +17,7 @@
 package fish.payara.qube.actions;
 
 import com.intellij.openapi.ui.Messages;
-import com.intellij.terminal.JBTerminalWidget;
+import com.intellij.terminal.frontend.view.TerminalView;
 import fish.payara.PayaraConstants;
 import fish.payara.qube.PayaraQubeProject;
 import fish.payara.qube.maven.QubeMavenProject;
@@ -37,7 +37,7 @@ public class QubeListApplicationAction extends QubeAction {
     @Override
     public void onAction(PayaraQubeProject project) {
         String projectName = project.getProjectName();
-        JBTerminalWidget terminal = getTerminal(project.getProject(), projectName);
+        TerminalView terminal = getTerminal(project.getProject(), projectName);
         if (terminal != null) {
             JPanel panel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();

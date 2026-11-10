@@ -16,7 +16,7 @@
  */
 package fish.payara.qube.actions;
 
-import com.intellij.terminal.JBTerminalWidget;
+import com.intellij.terminal.frontend.view.TerminalView;
 import fish.payara.qube.PayaraQubeProject;
 
 import java.util.logging.Logger;
@@ -35,7 +35,7 @@ public class QubeLoginAction extends QubeAction {
     public void onAction(PayaraQubeProject project) {
         String projectName;
         projectName = project.getProjectName();
-        JBTerminalWidget terminal = getTerminal(project.getProject(), projectName + " instance");
+        TerminalView terminal = getTerminal(project.getProject(), projectName + " instance");
         if (terminal != null) {
             executeCommand(terminal, project.getLoginCommand());
         } else {

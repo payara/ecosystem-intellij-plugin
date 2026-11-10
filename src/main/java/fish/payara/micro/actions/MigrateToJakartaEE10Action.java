@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.terminal.JBTerminalWidget;
+import com.intellij.terminal.frontend.view.TerminalView;
 import fish.payara.micro.PayaraMicroProject;
 import fish.payara.micro.maven.MicroMavenProject;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ import static java.util.logging.Level.WARNING;
 public class MigrateToJakartaEE10Action extends MicroAction {
     private static final Logger LOG = Logger.getLogger(MigrateToJakartaEE10Action.class.getName());
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent actionEvent) {
@@ -50,7 +50,7 @@ public class MigrateToJakartaEE10Action extends MicroAction {
         PsiFile[] poms = FilenameIndex.getFilesByName(project, "pom.xml", GlobalSearchScope.projectScope(project));
         PayaraMicroProject microProject = new MicroMavenProject(project, poms[0]);
         String projectName = project.getName();
-        JBTerminalWidget terminal = getTerminal(project, projectName);
+        TerminalView terminal = getTerminal(project, projectName);
         if (terminal != null) {
             Messages.showMessageDialog(
                     "Generating: " + destinationPath,

@@ -16,7 +16,7 @@
  */
 package fish.payara.micro.actions;
 
-import com.intellij.terminal.JBTerminalWidget;
+import com.intellij.terminal.frontend.view.TerminalView;
 import fish.payara.micro.DebuggerManager;
 import fish.payara.micro.PayaraMicroProject;
 import java.util.logging.Logger;
@@ -35,7 +35,7 @@ public class MicroStartDebuggerAction extends MicroAction {
         String projectName;
         projectName = project.getProjectName();
         DebuggerManager.connect(project.getProject());
-        JBTerminalWidget terminal = getTerminal(project.getProject(), projectName + " instance");
+        TerminalView terminal = getTerminal(project.getProject(), projectName + " instance");
         if (terminal != null) {
             executeCommand(terminal, project.getStartCommand(true));
         } else {

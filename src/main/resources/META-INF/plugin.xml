@@ -15,7 +15,7 @@
         </ul>
         
         Download the <a href="https://plugins.jetbrains.com/plugin/15445-payara-community-tools/">
-        Payara Tools</a> available in the IntelliJ IDEA Community 
+        Payara Tools</a> available in IntelliJ IDEA
         to develop the application with the Payara Qube, Payara Micro and Payara Server.
         
         Checkout the <a href="https://docs.payara.fish/community/docs/5.2020.6/documentation/ecosystem/intellij-plugin/README.html">
@@ -30,6 +30,11 @@
     <depends>org.jetbrains.plugins.terminal</depends>
     <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.platform</depends>
+    <dependencies>
+        <module name="intellij.platform.debugger"/>
+        <module name="intellij.platform.externalSystem"/>
+        <module name="intellij.terminal.frontend"/>
+    </dependencies>
     <resource-bundle>fish.payara.PayaraBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">

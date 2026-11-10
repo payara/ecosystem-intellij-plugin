@@ -4,13 +4,10 @@ pipeline {
         label 'general-purpose'
     }
     tools {
-        jdk "zulu-17"
+        jdk "zulu-25"
     }
     environment {
-        JAVA_HOME = tool("zulu-17")
-        GRADLE_HOME = "/usr/lib/gradle/jenkinstools/gradle-8.0"
-        PATH = "${GRADLE_HOME}/bin:${env.PATH}"
-        MAVEN_OPTS = '-Xmx2G -Djavax.net.ssl.trustStore=${JAVA_HOME}/jre/lib/security/cacerts'
+        JAVA_HOME = tool("zulu-25")
         payaraBuildNumber = "${BUILD_NUMBER}"
     }
     stages {
@@ -19,7 +16,7 @@ pipeline {
                 script {
                     echo '*#*#*#*#*#*#*#*#*#*#*#*#  Building SRC  *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                     sh '''
-                    gradle clean build -x check                    
+                    ./gradlew clean check buildPlugin verifyPlugin
                     '''
                     echo '*#*#*#*#*#*#*#*#*#*#*#*#    Built SRC   *#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'
                 }
