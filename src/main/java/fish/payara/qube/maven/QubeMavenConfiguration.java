@@ -35,6 +35,7 @@ import org.jdom.Element;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.execution.run.configuration.MavenRunConfigurationSettingsEditor;
+import java.util.ArrayList;
 
 public class QubeMavenConfiguration extends MavenRunConfiguration {
 
@@ -62,9 +63,10 @@ public class QubeMavenConfiguration extends MavenRunConfiguration {
                 parameters.setWorkingDirPath(super.getProject().getBasePath());
             }
             if (parameters.getGoals().isEmpty()) {
+                var goals = new ArrayList<String>();
                 QubeMavenProject mavenProject = QubeMavenProject.getInstance(super.getProject());
                 if (mavenProject == null) {
-                    parameters.getGoals().add(String.format(
+                    goals.add(String.format(
                             "%s:%s:%s:%s",
                             QubeMavenProject.QUBE_GROUP_ID,
                             QubeMavenProject.QUBE_ARTIFACT_ID,
@@ -72,12 +74,13 @@ public class QubeMavenConfiguration extends MavenRunConfiguration {
                             getGoals()
                     ));
                 } else {
-                    parameters.getGoals().add(String.format(
+                    goals.add(String.format(
                             "%s:%s",
                             QubeMavenProject.QUBE_PLUGIN,
                             getGoals()
                     ));
                 }
+                parameters.setGoals(goals);
             }
         }
        return LazyEditorFactory.create(this);

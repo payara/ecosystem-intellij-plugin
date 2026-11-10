@@ -41,7 +41,11 @@ public class QubeSettingsEditor extends SettingsEditor<QubeMavenConfiguration> {
   private JCheckBox myUseProjectSettings;
 
   public QubeSettingsEditor(@NotNull Project project) {
-    myPanel = new QubePanel(project, true);
+    this(new QubePanel(project, true));
+  }
+
+  QubeSettingsEditor(@NotNull QubePanel panel) {
+    myPanel = panel;
   }
 
   @Override

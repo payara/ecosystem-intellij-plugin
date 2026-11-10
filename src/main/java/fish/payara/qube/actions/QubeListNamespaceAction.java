@@ -18,7 +18,7 @@ package fish.payara.qube.actions;
 
 
 import com.intellij.openapi.ui.Messages;
-import com.intellij.terminal.JBTerminalWidget;
+import com.intellij.terminal.frontend.view.TerminalView;
 import fish.payara.qube.PayaraQubeProject;
 import fish.payara.qube.maven.QubeMavenProject;
 import static java.util.logging.Level.WARNING;
@@ -36,7 +36,7 @@ public class QubeListNamespaceAction extends QubeAction {
     public void onAction(PayaraQubeProject project) {
         String projectName;
         projectName = project.getProjectName();
-        JBTerminalWidget terminal = getTerminal(project.getProject(), projectName);
+        TerminalView terminal = getTerminal(project.getProject(), projectName);
         if (terminal != null) {
             String subscriptionValue = Messages.showInputDialog(
                 project.getProject(),

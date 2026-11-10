@@ -240,7 +240,7 @@ public class QubePanel {
             @Override
             protected List<Link> doInBackground() throws Exception {
                 // Fetch subscriptions in the background
-                return QubeUtil.getSubscriptions();
+                return loadSubscriptions();
             }
 
             @Override
@@ -279,7 +279,7 @@ public class QubePanel {
                 @Override
                 protected List<Link> doInBackground() throws Exception {
                     // Fetch namespaces in the background
-                    return subscriptionsCache != null ? QubeUtil.getNamespaces(selectedSubscription) : Collections.emptyList();
+                    return subscriptionsCache != null ? loadNamespaces(selectedSubscription) : Collections.emptyList();
                 }
 
                 @Override
@@ -306,6 +306,14 @@ public class QubePanel {
         if (namespaceValue != null && !namespaceValue.isEmpty()) {
             namespaceComboBox.setSelectedItem(namespaceValue);
         }
+    }
+
+    List<Link> loadSubscriptions() throws Exception {
+        return QubeUtil.getSubscriptions();
+    }
+
+    List<Link> loadNamespaces(String subscription) throws Exception {
+        return QubeUtil.getNamespaces(subscription);
     }
 
     private void updateMavenProperties() {

@@ -20,7 +20,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.terminal.JBTerminalWidget;
+import com.intellij.terminal.frontend.view.TerminalView;
 import fish.payara.PayaraConstants;
 import fish.payara.micro.PayaraMicroProject;
 import java.util.logging.Logger;
@@ -40,7 +40,7 @@ public class MicroReloadAction extends MicroAction {
             String projectName = project.getProjectName();
             String command = project.getReloadCommand();
 
-            JBTerminalWidget terminal = getTerminal(project.getProject(), projectName);
+            TerminalView terminal = getTerminal(project.getProject(), projectName);
             if (terminal != null) {
                 executeCommand(terminal, command);
             } else {

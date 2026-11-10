@@ -27,6 +27,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import static fish.payara.PayaraConstants.DEFAULT_DEBUG_PORT;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
@@ -342,23 +343,25 @@ public class ServerMavenConfiguration extends MavenRunConfiguration {
                 parameters.setWorkingDirPath(super.getProject().getBasePath());
             }
             if (parameters.getGoals().isEmpty()) {
+                var goals = new ArrayList<String>();
                 ServerMavenProject mavenProject = ServerMavenProject.getInstance(super.getProject());
                 if (mavenProject == null) {
-                    parameters.getGoals().add(ServerMavenProject.PACKAGE_GOAL);
-                    parameters.getGoals().add(String.format("%s:%s:%s:%s",
+                    goals.add(ServerMavenProject.PACKAGE_GOAL);
+                    goals.add(String.format("%s:%s:%s:%s",
                             ServerMavenProject.SERVER_PLUGIN_GROUP_ID,
                             ServerMavenProject.SERVER_PLUGIN_ARTIFACT_ID,
                             ServerMavenProject.SERVER_PLUGIN_VERSION,
                             ServerMavenProject.DEV_GOAL
                     ));
                 } else {
-                    parameters.getGoals().add(ServerMavenProject.PACKAGE_GOAL);
-                    parameters.getGoals().add(String.format(
+                    goals.add(ServerMavenProject.PACKAGE_GOAL);
+                    goals.add(String.format(
                             "%s:%s",
                             ServerMavenProject.SERVER_PLUGIN,
                             ServerMavenProject.DEV_GOAL
                     ));
                 }
+                parameters.setGoals(goals);
             }
         }
         return LazyEditorFactory.create(this);

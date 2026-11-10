@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenRunConfiguration;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.execution.run.MavenCommandLineState;
+import java.util.ArrayList;
 
 public class MicroMavenConfiguration extends MavenRunConfiguration {
 
@@ -46,10 +47,11 @@ public class MicroMavenConfiguration extends MavenRunConfiguration {
                 parameters.setWorkingDirPath(super.getProject().getBasePath());
             }
             if (parameters.getGoals().isEmpty()) {
+                var goals = new ArrayList<String>();
                 MicroMavenProject mavenProject = MicroMavenProject.getInstance(super.getProject());
                 if (mavenProject == null) {
-                    parameters.getGoals().add(MicroMavenProject.PACKAGE_GOAL);
-                    parameters.getGoals().add(String.format(
+                    goals.add(MicroMavenProject.PACKAGE_GOAL);
+                    goals.add(String.format(
                             "%s:%s:%s:%s",
                             MicroMavenProject.MICRO_GROUP_ID,
                             MicroMavenProject.MICRO_ARTIFACT_ID,
@@ -57,13 +59,14 @@ public class MicroMavenConfiguration extends MavenRunConfiguration {
                             MicroMavenProject.DEV_GOAL
                     ));
                 } else {
-                    parameters.getGoals().add(MicroMavenProject.PACKAGE_GOAL);
-                    parameters.getGoals().add(String.format(
+                    goals.add(MicroMavenProject.PACKAGE_GOAL);
+                    goals.add(String.format(
                             "%s:%s",
                             MicroMavenProject.MICRO_PLUGIN,
                             MicroMavenProject.DEV_GOAL
                     ));
                 }
+                parameters.setGoals(goals);
             }
         }
         return super.getConfigurationEditor();

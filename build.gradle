@@ -1,66 +1,80 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.13.2'
-    id 'com.github.spotbugs' version '5.0.14' // Add SpotBugs plugin
+    id 'org.jetbrains.intellij.platform' version '2.20.1'
+    id 'com.github.spotbugs' version '6.5.6'
 }
 
-apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'idea'
-apply plugin: 'java'
 
 group 'fish.payara.micro.tools'
 version '2.4.0-SNAPSHOT'
 
-sourceCompatibility = "17"
-targetCompatibility = "17"
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+}
 
 repositories {
     mavenLocal()
     mavenCentral()
+    intellijPlatform {
+        defaultRepositories()
+    }
     maven {
         url "https://nexus.dev.payara.fish/repository/payara-artifacts/"
     }
 }
 
 dependencies {
+    intellijPlatform {
+        intellijIdea(providers.gradleProperty('platformVersion'))
+        bundledPlugins('com.intellij.java', 'org.jetbrains.idea.maven',
+                'org.jetbrains.plugins.gradle', 'org.jetbrains.plugins.terminal')
+        bundledModules('intellij.platform.debugger', 'intellij.platform.externalSystem',
+                'intellij.terminal.frontend')
+        testFramework org.jetbrains.intellij.platform.gradle.TestFrameworkType.JUnit5.INSTANCE
+        testFramework org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform.INSTANCE
+    }
     implementation 'fish.payara.tools:payara-qube:2.0.0'
     implementation 'fish.payara.qube:qube-api:2.0.0'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.1'
+    testImplementation platform('org.junit:junit-bom:6.1.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-// SpotBugs Configuration
 spotbugs {
-    toolVersion = '4.2.3'  // Set the SpotBugs version
-    effort = 'max'          // Maximum analysis effort
-    reportLevel = 'low'     // Report all issues
-    ignoreFailures = true  // Fail the build on SpotBugs violations (set to true if you want the build to continue)
+    effort = com.github.spotbugs.snom.Effort.valueOf('MAX')
+    reportLevel = com.github.spotbugs.snom.Confidence.valueOf('LOW')
+    ignoreFailures = true
 }
 
 tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
     reports {
-        xml.enabled = true    // Enable XML report
-        html.enabled = false   // Enable HTML report
+        xml.required = true
+        html.required = false
     }
 }
 
-runIde {
-    jvmArgs = [
-        '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED',
-        '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'
-    ]
+test {
+    useJUnitPlatform()
 }
 
-intellij {
-    version = '2025.2.3'
-    type = 'IC'
-    pluginName = 'Payara Community Tools'
-    plugins = ['java', 'maven', 'gradle', 'terminal']
-}
-
-patchPluginXml {
-    sinceBuild = "252.13776"
-}
-
-publishPlugin {
-    token = System.getProperty("fish.payara.micro.intellij.publish.token")
+intellijPlatform {
+    pluginConfiguration {
+        name = 'Payara Community Tools'
+        ideaVersion {
+            sinceBuild = '263.7307.200'
+            untilBuild = '263.*'
+        }
+    }
+    publishing {
+        token = providers.systemProperty('fish.payara.micro.intellij.publish.token')
+    }
+    pluginVerification {
+        // Marketplace plugin 15445 already uses this ID; changing it would break updates.
+        freeArgs = ['-mute', 'TemplateWordInPluginId']
+        ides {
+            current()
+        }
+    }
 }

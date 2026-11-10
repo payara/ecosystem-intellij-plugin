@@ -16,7 +16,7 @@
  */
 package fish.payara.micro.actions;
 
-import com.intellij.terminal.JBTerminalWidget;
+import com.intellij.terminal.frontend.view.TerminalView;
 import fish.payara.micro.PayaraMicroProject;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
@@ -33,7 +33,7 @@ public class MicroBundleAction extends MicroAction {
     public void onAction(PayaraMicroProject project) {
         String projectName;
         projectName = project.getProjectName();
-        JBTerminalWidget terminal = getTerminal(project.getProject(), projectName);
+        TerminalView terminal = getTerminal(project.getProject(), projectName);
         if (terminal != null) {
             executeCommand(terminal, project.getBundleCommand());
         } else {

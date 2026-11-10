@@ -23,21 +23,15 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.terminal.JBTerminalWidget;
-import com.intellij.ui.content.Content;
-import com.jediterm.terminal.TtyConnector;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.terminal.frontend.toolwindow.TerminalToolWindowTabsManager;
+import com.intellij.terminal.frontend.view.TerminalView;
 import fish.payara.PayaraBundle;
 import fish.payara.PayaraConstants;
 import fish.payara.qube.maven.QubeMavenProject;
 import fish.payara.qube.PayaraQubeProject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.terminal.LocalTerminalDirectRunner;
-import org.jetbrains.plugins.terminal.ShellTerminalWidget;
-import org.jetbrains.plugins.terminal.TerminalTabState;
-import org.jetbrains.plugins.terminal.TerminalView;
 
-import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -85,54 +79,36 @@ public abstract class QubeAction extends AnAction {
 
     public abstract void onAction(PayaraQubeProject project);
 
-    public JBTerminalWidget getTerminal(Project project, String tabName) {
-        ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
-        ToolWindow terminalWindow = windowManager.getToolWindow(TOOL_WINDOW_ID);
-        if (terminalWindow != null) {
-            JBTerminalWidget widget = findTerminal(terminalWindow, tabName);
-            if (widget != null) {
-                return widget;
-            }
-            createTerminal(project, tabName);
-            return findTerminal(terminalWindow, tabName);
+    public TerminalView getTerminal(Project project, String tabName) {
+        ToolWindow terminalWindow = ToolWindowManager.getInstance(project).getToolWindow(TOOL_WINDOW_ID);
+        if (terminalWindow == null) {
+            return null;
         }
-        return null;
-    }
-
-    private void createTerminal(Project project, String tabName) {
-        TerminalTabState tabState = new TerminalTabState();
-        tabState.myTabName = tabName;
-        tabState.myWorkingDirectory = project.getBasePath();
-        TerminalView.getInstance(project)
-                .createNewSession(new LocalTerminalDirectRunner(project), tabState);
-    }
-
-    private JBTerminalWidget findTerminal(ToolWindow terminalWindow, String tabName) {
-        Content[] contents = terminalWindow.getContentManager().getContents();
-        for (Content content : contents) {
-            if (content.getTabName().equals(tabName)) {
-                return TerminalView.getWidgetByContent(content);
+        TerminalToolWindowTabsManager tabsManager = TerminalToolWindowTabsManager.getInstance(project);
+        for (var tab : tabsManager.getTabs()) {
+            var content = tab.getContent();
+            var contentManager = content.getManager();
+            if (tabName.equals(content.getTabName()) && contentManager != null) {
+                contentManager.setSelectedContent(content);
+                terminalWindow.activate(null);
+                return tab.getView();
             }
         }
-        return null;
+        return tabsManager.createTabBuilder()
+                .workingDirectory(project.getBasePath())
+                .tabName(tabName)
+                .requestFocus(true)
+                .createTab().getView();
     }
 
-    public void executeCommand(JBTerminalWidget widget, String command) {
-        try {
-            widget.setRequestFocusEnabled(true);
-            widget.requestFocusInWindow();
-            widget.requestFocus(true);
-            widget.requestFocus();
-            widget.grabFocus();
-            TtyConnector connector = widget.getTtyConnector();
-            if (connector != null) {
-                connector.write(command);
-                connector.write(widget.getTerminalStarter().getCode(KeyEvent.VK_ENTER, 0));
-            } else if (widget instanceof ShellTerminalWidget) {
-                ((ShellTerminalWidget) widget).executeCommand(command);
+    public void executeCommand(TerminalView terminal, String command) {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            try {
+                terminal.getPreferredFocusableComponent().requestFocusInWindow();
+                terminal.createSendTextBuilder().shouldExecute().send(command);
+            } catch (RuntimeException ex) {
+                LOG.log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
-        }
+        });
     }
 }
